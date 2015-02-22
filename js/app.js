@@ -42,7 +42,13 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.currentRoom = $routeParams.room;
 	$scope.currentUser = $routeParams.user;
 	$scope.currentUsers = [];
-	$scope.errorMessage = ''
+	$scope.errorMessage = '';
+	
+	$scope.messages = ['hallo', 'hi', 'hvad segirdu?', 'fint'];
+
+	$scope.addMessage = function(){
+		$scope.messages.push($scope.newMessage);
+	};
 
 	socket.on('updateusers', function (roomName, users, ops) {
 		// TODO: Check if the roomName equals the current room !
