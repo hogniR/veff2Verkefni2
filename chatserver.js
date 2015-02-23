@@ -39,7 +39,6 @@ io.sockets.on('connection', function (socket) {
 		var pass = joinObj.pass;
 		var accepted = true;
 		var reason;
-
 		//If the room does not exist
 		if(rooms[room] === undefined) {
 			rooms[room] = new Room();
