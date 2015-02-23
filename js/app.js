@@ -44,18 +44,25 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.currentUsers = [];
 	$scope.errorMessage = '';
 	
-	$scope.messages = ['hallo', 'hi', 'hvad segirdu?', 'fint'];
+	$scope.messages = [];
 
 	$scope.addMessage = function(){
-		$scope.messages.push($scope.newMessage);
+		console.log($scope.currentRoom);
+		socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
+		$scope.newMessage = "";
+		socket.on('updatechat', function (roomName, history){
+			if(roomName === $routeParams.room) $scope.messages = history;
+		});
 	};
+	
 
 	socket.on('updateusers', function (roomName, users, ops) {
-		// TODO: Check if the roomName equals the current room !
-		$scope.currentUsers = users;
+		if(roomName === $routeParams.room){
+			$scope.currentUsers = users;
+		}
 	});		
 
-	socket.emit('joinroom', $scope.currentRoom, function (success, reason) {
+	socket.emit('joinroom', {room: $scope.currentRoom}, function (success, reason) {
 		if (!success)
 		{
 			$scope.errorMessage = reason;
