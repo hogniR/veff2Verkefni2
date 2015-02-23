@@ -69,7 +69,10 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			}  
 		});	
 	};
-	
+	socket.on('userlist', function(currentUsers){
+		console.log(currentUsers);
+	});
+	socket.emit('users');
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
