@@ -33,6 +33,7 @@ ChatClient.controller('LoginController', function ($scope, $location, $rootScope
 });
 
 ChatClient.controller('RoomsController', function ($scope, $location, $rootScope, $routeParams, socket) {
+<<<<<<< HEAD
 	// TODO: Query chat server for active rooms
 	$scope.rooms = [];
 	$scope.currentUser = $routeParams.user;
@@ -55,6 +56,24 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 			$scope.rooms = Object.keys(activeRooms);
 		}
 	})
+=======
+	$scope.rooms = [];
+	$scope.currentUser = $routeParams.user;
+	$scope.createRoom = function(){
+		socket.emit('joinroom', {room: $scope.roomName}, function (success, reason){
+			if(!success){
+				console.log(reason);
+			}
+		});
+		$scope.roomName = "";
+	};
+	socket.on('roomlist', function (activeRooms){
+		if(activeRooms !== null){
+			$scope.rooms = Object.keys(activeRooms);
+		}
+		
+	});
+>>>>>>> 6a83b43298b5dc8098c2ee364ecf88c75e3a55e8
 	socket.emit('rooms');
 });
 
@@ -67,15 +86,15 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.messages = [];
 
 	$scope.addMessage = function(){
-		console.log($scope.currentRoom);
 		socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
 		$scope.newMessage = "";
 		socket.on('updatechat', function (roomName, history){
-			if(roomName === $routeParams.room) $scope.messages = history;
-		});
+			if(roomName === $routeParams.room){
+				$scope.messages = history;
+			}  
+		});	
 	};
 	
-
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
