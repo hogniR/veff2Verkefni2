@@ -43,7 +43,6 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 				$scope.errorMessage = reason;
 			}
 			else{
-				console.log($scope.newRoom);
 				$location.path('/room/' + $scope.currentUser  + '/' +  $scope.newRoom );
 			}
 		});
@@ -81,17 +80,12 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.addMessage = function(){
 		if($scope.newMessage !== ""){
 			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
-			$scope.newMessage = "";
-			socket.on('updatechat', function (roomName, history){
-				if(roomName === $routeParams.room){
-					$scope.messages = history;
-				}  
-			});	
+			$scope.newMessage = "";	
 		}
 	};
 
 	socket.on('userlist', function(currentUsers){
-		console.log(currentUsers);
+		//console.log(currentUsers);
 	});
 	
 	socket.emit('users');
@@ -100,6 +94,14 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			$scope.currentUsers = users;
 		}
 	});	
+
+	socket.on('updatechat', function (roomName, history){
+		if(roomName === $routeParams.room){
+			$scope.messages = history;
+		}
+		$('#chat').animate(
+			{scrollTop: $(document).height() + 5000}, "fast");
+	});
 
 	socket.emit('joinroom', {room: $scope.currentRoom}, function (success, reason) {
 		if (!success){
@@ -113,15 +115,10 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			if(!success){
 				$scope.errorMessage = "You must be the creator of this group to kick users";
 			}
-			else{
-
-			}
 		});
 	}
 
 	socket.on('kicked', function (roomName, kickedUser, user) {
-		console.log(kickedUser);
-		console.log('trololo');
 		if($scope.currentUser === kickedUser){
 			$location.path('/rooms/' + $scope.currentUser)
 		}
