@@ -33,22 +33,29 @@ ChatClient.controller('LoginController', function ($scope, $location, $rootScope
 });
 
 ChatClient.controller('RoomsController', function ($scope, $location, $rootScope, $routeParams, socket) {
+<<<<<<< HEAD
 	// TODO: Query chat server for active rooms
+=======
+
+>>>>>>> 377fd39a4108153d0a6e45f5d2aede2928d85ca8
 	$scope.rooms = [];
 	$scope.currentUser = $routeParams.user;
 	$scope.errorMessage = '';
 	$scope.addRoom = function(){
-		console.log($scope.newRoom);
 		socket.emit('joinroom', {room: $scope.newRoom}, function (success, reason) {
 			if (!success){
 				$scope.errorMessage = reason;
 			}
 			else{
+<<<<<<< HEAD
 				console.log($scope.newRoom);
+=======
+>>>>>>> 377fd39a4108153d0a6e45f5d2aede2928d85ca8
 				$location.path('/room/' + $scope.currentUser  + '/' +  $scope.newRoom );
 			}
 		});
 	};
+<<<<<<< HEAD
 
 	$scope.joinRoom = function(currRoom){
 		socket.emit('joinroom', {room: currRoom}, function (success, reason) {
@@ -60,6 +67,8 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 			}
 		});
 	}
+=======
+>>>>>>> 377fd39a4108153d0a6e45f5d2aede2928d85ca8
 	$scope.newRoom = ""
 	socket.on('roomlist', function(activeRooms){
 		if(activeRooms !== null){
@@ -79,15 +88,22 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.messages = [];
 
 	$scope.addMessage = function(){
-		socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
-		$scope.newMessage = "";
-		socket.on('updatechat', function (roomName, history){
-			if(roomName === $routeParams.room){
-				$scope.messages = history;
-			}  
-		});	
+		if($scope.newMessage !== ""){
+			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
+			$scope.newMessage = "";
+			socket.on('updatechat', function (roomName, history){
+				if(roomName === $routeParams.room){
+					$scope.messages = history;
+				}  
+			});	
+		}
 	};
+
+	socket.on('userlist', function(currentUsers){
+		console.log(currentUsers);
+	});
 	
+	socket.emit('users');
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;

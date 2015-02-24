@@ -4,8 +4,10 @@
 	{{errorMessage}}
 </div>
 
-<input type="text" ng-model="newRoom"/>
-<button class="btn btn-primary" ng-click="addRoom()">Create new room</button>
+<form ng-submit="addRoom()">
+Create new room:<input type="text" ng-model="newRoom"/>
+<button class="btn btn-primary" ng-click="addRoom()">Create</button>
+</form>
 
 <div class="well">
 	<ul ng-repeat="currRoom in rooms">
@@ -14,5 +16,4 @@
 			<a ng-click="joinRoom(currRoom)">{{currRoom}}</a>
 		</li>
 	</ul>
-	
 </div>
