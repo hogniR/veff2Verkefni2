@@ -2,7 +2,7 @@
 	{{errorMessage}}
 </div>
 
-<h3>Hi {{currentUser}} - Room {{currentRoom}}</h3>
+<h3>Hi {{currentUser}} - Room: {{currentRoom}}</h3>
 <div class="col-md-9">
 	<ul class="msgList">
 		<li class="" ng-repeat="msg in messages"><p>{{msg.nick}}: {{msg.message}}</p></li>
@@ -14,9 +14,23 @@
 </div>
 <div class="col-md-3">
 	<h4>Users in this room</h4>
-	<div class="well">	
-		<ul>
-			<li ng-repeat="user in currentUsers">{{user}}<a class="close" ng-click="kickUser()">×</a></li>
-		</ul>
+	<div class="dropdown">	
+		<div ng-repeat="user in currentUsers">
+			<button  class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">{{user}}<span class="caret"></span></button>
+				<ul class="dropdown-menu" role="menu">
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="kickUser(user)">Kick user</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="banUser(user)"> Ban user</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="sendPrivatMessage()"> Send private message</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="partRoom()"> Leave room</a>
+					</li>
+				</ul>
+		</div>
 	</div>
 </div>

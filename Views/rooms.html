@@ -1,15 +1,18 @@
 <h3>Hi {{currentUser}} - Active chat rooms</h3>
 
-Create new room:<input type="text" ng-model="newRoom"/>
-<button ng-click="addRoom()">Create</button>
+<div class="alert alert-danger" ng-cloak ng-show="errorMessage != ''">
+	{{errorMessage}}
+</div>
+
+<input type="text" ng-model="newRoom"/>
+<button class="btn btn-primary" ng-click="addRoom()">Create new room</button>
 
 <div class="well">
-	<ul ng-repeat="room in rooms">
-		<li><a href="#/room/{{currentUser}}/{{room}}">{{room}}</a></li>
+	<ul ng-repeat="currRoom in rooms">
+		<!--<li><a href="#/room/{{currentUser}}/{{room}}">{{room}}</a></li>-->
+		<li>
+			<a ng-click="joinRoom(currRoom)">{{currRoom}}</a>
+		</li>
 	</ul>
-	<span>
-		<input type="text" ng-model="roomName"/>
-		<button class="btn btn-primary" ng-click="createRoom()">Create new room</button>
-	</span>
 	
 </div>

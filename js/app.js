@@ -33,47 +33,40 @@ ChatClient.controller('LoginController', function ($scope, $location, $rootScope
 });
 
 ChatClient.controller('RoomsController', function ($scope, $location, $rootScope, $routeParams, socket) {
-<<<<<<< HEAD
 	// TODO: Query chat server for active rooms
 	$scope.rooms = [];
 	$scope.currentUser = $routeParams.user;
+	$scope.errorMessage = '';
 	$scope.addRoom = function(){
 		console.log($scope.newRoom);
 		socket.emit('joinroom', {room: $scope.newRoom}, function (success, reason) {
-			if (!success)
-			{
+			if (!success){
 				$scope.errorMessage = reason;
 			}
 			else{
 				console.log($scope.newRoom);
-				$location.path('/room/:' + $scope.currentUser  + '/:' +  $scope.newRoom );
+				$location.path('/room/' + $scope.currentUser  + '/' +  $scope.newRoom );
 			}
 		});
 	};
+
+	$scope.joinRoom = function(currRoom){
+		socket.emit('joinroom', {room: currRoom}, function (success, reason) {
+			if(!success){
+				$scope.errorMessage = reason;
+			}
+			else{
+				$location.path('/room/' + $scope.currentUser  + '/' +  currRoom );
+			}
+		});
+	}
 	$scope.newRoom = ""
 	socket.on('roomlist', function(activeRooms){
 		if(activeRooms !== null){
 			$scope.rooms = Object.keys(activeRooms);
 		}
 	})
-=======
-	$scope.rooms = [];
-	$scope.currentUser = $routeParams.user;
-	$scope.createRoom = function(){
-		socket.emit('joinroom', {room: $scope.roomName}, function (success, reason){
-			if(!success){
-				console.log(reason);
-			}
-		});
-		$scope.roomName = "";
-	};
-	socket.on('roomlist', function (activeRooms){
-		if(activeRooms !== null){
-			$scope.rooms = Object.keys(activeRooms);
-		}
-		
-	});
->>>>>>> 6a83b43298b5dc8098c2ee364ecf88c75e3a55e8
+
 	socket.emit('rooms');
 });
 
@@ -99,27 +92,50 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
 		}
-	});		
+	});	
 
 	socket.emit('joinroom', {room: $scope.currentRoom}, function (success, reason) {
-		if (!success)
-		{
+		if (!success){
+			$location.path('/rooms/' + $scope.currentUser);
 			$scope.errorMessage = reason;
 		}
 	});
-	$scope.kickUser = function(){
-		socket.on('userlist', function(userList){
-			console.log(userList);
-			console.log($routeParams);
-		});
-		socket.emit('users');
-		socket.emit('kick', {room: $scope.currentRoom, user: $scope.currentUser}, function (success){
-			if(!success)
-			{
-				$scope.errorMessage = "bug";
+
+	$scope.kickUser = function (user) {
+		socket.emit('kick', {room: $scope.currentRoom, user: user}, function (success){
+			if(!success){
+				$scope.errorMessage = "You must be the creator of this group to kick users";
+			}
+			else{
+
 			}
 		});
 	}
+
+	socket.on('kicked', function (roomName, kickedUser, user) {
+		console.log(kickedUser);
+		console.log('trololo');
+		if($scope.currentUser === kickedUser){
+			$location.path('/rooms/' + $scope.currentUser)
+		}
+	});	
+
+	$scope.banUser = function (user) {
+		socket.emit('ban', {room: $scope.currentRoom, user: user}, function (success){
+			if(!success){
+				$scope.errorMessage = "You must be the creator of this group to ban users";
+			}
+		});
+	}
+
+	$scope.partRoom = function (user) {
+		$scope.currentUser = user;
+		socket.emit('partroom', {room: $scope.currentRoom});
+	}
+
+	//$scope.sendPrivateMessage = function (user) {
+	//	$scope.emit('privatemsg', {nick: user, mess})
+	//}
 });
 
 
