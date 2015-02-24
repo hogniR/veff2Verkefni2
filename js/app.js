@@ -37,15 +37,13 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 	$scope.rooms = [];
 	$scope.currentUser = $routeParams.user;
 	$scope.addRoom = function(){
-		console.log($scope.newRoom);
 		socket.emit('joinroom', {room: $scope.newRoom}, function (success, reason) {
 			if (!success)
 			{
 				$scope.errorMessage = reason;
 			}
 			else{
-				console.log($scope.newRoom);
-				$location.path('/room/:' + $scope.currentUser  + '/:' +  $scope.newRoom );
+				$location.path('/room/' + $scope.currentUser  + '/' +  $scope.newRoom );
 			}
 		});
 	};
@@ -68,15 +66,22 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.messages = [];
 
 	$scope.addMessage = function(){
-		socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
-		$scope.newMessage = "";
-		socket.on('updatechat', function (roomName, history){
-			if(roomName === $routeParams.room){
-				$scope.messages = history;
-			}  
-		});	
+		if($scope.newMessage !== ""){
+			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
+			$scope.newMessage = "";
+			socket.on('updatechat', function (roomName, history){
+				if(roomName === $routeParams.room){
+					$scope.messages = history;
+				}  
+			});	
+		}
 	};
+
+	socket.on('userlist', function(currentUsers){
+		console.log(currentUsers);
+	});
 	
+	socket.emit('users');
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
