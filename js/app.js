@@ -33,13 +33,9 @@ ChatClient.controller('LoginController', function ($scope, $location, $rootScope
 });
 
 ChatClient.controller('RoomsController', function ($scope, $location, $rootScope, $routeParams, socket) {
-<<<<<<< HEAD
-	// TODO: Query chat server for active rooms
-=======
-
->>>>>>> 377fd39a4108153d0a6e45f5d2aede2928d85ca8
 	$scope.rooms = [];
 	$scope.currentUser = $routeParams.user;
+	$scope.currentRoom = $routeParams.room;
 	$scope.errorMessage = '';
 	$scope.addRoom = function(){
 		socket.emit('joinroom', {room: $scope.newRoom}, function (success, reason) {
@@ -47,15 +43,11 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 				$scope.errorMessage = reason;
 			}
 			else{
-<<<<<<< HEAD
 				console.log($scope.newRoom);
-=======
->>>>>>> 377fd39a4108153d0a6e45f5d2aede2928d85ca8
 				$location.path('/room/' + $scope.currentUser  + '/' +  $scope.newRoom );
 			}
 		});
 	};
-<<<<<<< HEAD
 
 	$scope.joinRoom = function(currRoom){
 		socket.emit('joinroom', {room: currRoom}, function (success, reason) {
@@ -67,8 +59,7 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 			}
 		});
 	}
-=======
->>>>>>> 377fd39a4108153d0a6e45f5d2aede2928d85ca8
+
 	$scope.newRoom = ""
 	socket.on('roomlist', function(activeRooms){
 		if(activeRooms !== null){
