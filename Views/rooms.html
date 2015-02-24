@@ -1,15 +1,11 @@
 <h3>Hi {{currentUser}} - Active chat rooms</h3>
-
+<form ng-submit="addRoom()">
 Create new room:<input type="text" ng-model="newRoom"/>
-<button ng-click="addRoom()">Create</button>
+<button class="btn btn-primary" ng-click="addRoom()">Create</button>
+</form>
 
 <div class="well">
 	<ul ng-repeat="room in rooms">
 		<li><a href="#/room/{{currentUser}}/{{room}}">{{room}}</a></li>
 	</ul>
-	<span>
-		<input type="text" ng-model="roomName"/>
-		<button class="btn btn-primary" ng-click="createRoom()">Create new room</button>
-	</span>
-	
 </div>
