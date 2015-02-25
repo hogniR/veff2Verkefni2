@@ -59,7 +59,7 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 		});
 	}
 
-	$scope.newRoom = ""
+	//$scope.newRoom = "";
 	socket.on('roomlist', function(activeRooms){
 		if(activeRooms !== null){
 			$scope.rooms = Object.keys(activeRooms);
@@ -88,10 +88,6 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			$scope.newMessage = "";	
 		}
 	}
-
-	socket.on('userlist', function(currentUsers){
-		//console.log(currentUsers);
-	});
 	
 	socket.emit('users');
 
@@ -137,26 +133,4 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			}
 		});
 	}
-
-	
-
-	//$scope.sendPrivateMessage = function (user) {
-	//	$scope.emit('privatemsg', {nick: user, mess})
-	//}
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
