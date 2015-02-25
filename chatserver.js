@@ -35,10 +35,12 @@ io.sockets.on('connection', function (socket) {
 
 	//When a user joins a room this processes the request.
 	socket.on('joinroom', function (joinObj, fn) {
+
 		var room = joinObj.room;
 		var pass = joinObj.pass;
 		var accepted = true;
 		var reason;
+
 		//If the room does not exist
 		if(rooms[room] === undefined) {
 			rooms[room] = new Room();
@@ -75,7 +77,7 @@ io.sockets.on('connection', function (socket) {
 			//Check if the user has been added to the ban list.
 			if(rooms[room].banned[socket.username] !== undefined) {
 				accepted = false;
-				reason = "You have been banned from this chat";
+				reason = "You have been banned from this room";
 			}
 			//If accepted is set to true at this point the user is allowed to join the room.
 			if(accepted) {
@@ -97,7 +99,7 @@ io.sockets.on('connection', function (socket) {
 
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendmsg', function (data) {
-		console.log(data);
+		
 		var userAllowed = false;
 
 		//Check if user is allowed to send message.
