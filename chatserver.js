@@ -163,6 +163,26 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
+	// when the user disconnects.. perform this
+	socket.on('logoff', function(){
+		console.log("fuckoff");
+		if(socket.username) {
+			//If the socket doesn't have a username the client joined and parted without
+			//chosing a username, so we just close the socket without any cleanup.
+			for(var room in users[socket.username].channels) {
+				//Remove the user from users/ops lists in the rooms he's currently in.
+				delete rooms[room].users[socket.username];
+				delete rooms[room].ops[socket.username];
+				io.sockets.emit('updateusers', room, rooms[room].users, rooms[room].ops);
+			}
+
+			//Broadcast the the user has left the channels he was in.
+			io.sockets.emit('servermessage', "quit", users[socket.username].channels, socket.username);
+			//Remove the user from the global user roster.
+			delete users[socket.username];
+		}
+	});
+
 	//When a user tries to kick another user this gets performed.
 	socket.on('kick', function (kickObj, fn) {
 		console.log(socket.username + " kicked " + kickObj.user + " from " + kickObj.room);

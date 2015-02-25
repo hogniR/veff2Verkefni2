@@ -17,3 +17,15 @@
 #sendMsg{
 	width: 701px;
 }
+
+#lobby {
+	width: 30%;
+	list-style-type:none;
+
+}
+#roomList {
+	list-style-type:none; 
+}
+#userCount {
+	font-weight: bold;
+}
