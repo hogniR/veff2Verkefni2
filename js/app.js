@@ -77,18 +77,24 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	
 	$scope.messages = [];
 
+	$scope.partRoom = function () {
+		socket.emit('partroom', $scope.currentRoom);
+		$location.path('/rooms/' + $scope.currentUser);
+	};
+
 	$scope.addMessage = function(){
 		if($scope.newMessage !== ""){
 			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
 			$scope.newMessage = "";	
 		}
-	};
+	}
 
 	socket.on('userlist', function(currentUsers){
 		//console.log(currentUsers);
 	});
 	
 	socket.emit('users');
+
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
@@ -132,10 +138,7 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 		});
 	}
 
-	$scope.partRoom = function (user) {
-		$scope.currentUser = user;
-		socket.emit('partroom', {room: $scope.currentRoom});
-	}
+	
 
 	//$scope.sendPrivateMessage = function (user) {
 	//	$scope.emit('privatemsg', {nick: user, mess})
