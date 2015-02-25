@@ -92,24 +92,33 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	
 	$scope.messages = [];
 
+	$scope.partRoom = function () {
+		socket.emit('partroom', $scope.currentRoom);
+		$location.path('/rooms/' + $scope.currentUser);
+	};
+
 	$scope.addMessage = function(){
 		if($scope.newMessage !== ""){
 			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
-			$scope.newMessage = "";
-			socket.on('updatechat', function (roomName, history){
-				if(roomName === $routeParams.room){
-					$scope.messages = history;
-				}  
-			});	
+			$scope.newMessage = "";	
 		}
 	};
 	
 	socket.emit('users');
+
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
 		}
 	});	
+
+	socket.on('updatechat', function (roomName, history){
+		if(roomName === $routeParams.room){
+			$scope.messages = history;
+		}
+		$('#chat').animate(
+			{scrollTop: $(document).height() + 5000}, "fast");
+	});
 
 	socket.emit('joinroom', {room: $scope.currentRoom}, function (success, reason) {
 		if (!success){
@@ -122,9 +131,6 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 		socket.emit('kick', {room: $scope.currentRoom, user: user}, function (success){
 			if(!success){
 				$scope.errorMessage = "You must be the creator of this group to kick users";
-			}
-			else{
-
 			}
 		});
 	}
@@ -143,10 +149,7 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 		});
 	}
 
-	$scope.partRoom = function (user) {
-		$scope.currentUser = user;
-		socket.emit('partroom', {room: $scope.currentRoom});
-	}
+	
 
 	//$scope.sendPrivateMessage = function (user) {
 	//	$scope.emit('privatemsg', {nick: user, mess})

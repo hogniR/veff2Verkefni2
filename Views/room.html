@@ -4,7 +4,7 @@
 
 <h3>Hi {{currentUser}} - Room: {{currentRoom}}</h3>
 <div class="col-md-9">
-	<div class="chat">
+	<div id="chat">
 		<ul class="msgList">
 			<li class="" ng-repeat="msg in messages"><p>[{{msg.timestamp | date:"HH:mm"}}] {{msg.nick}}: {{msg.message}}</p></li>
 		</ul>
@@ -13,6 +13,8 @@
 		<input id="sendMsg" type="text" ng-model="newMessage"/>
 		<button class="btn btn-primary" ng-click="addMessage()">Send message</button>
 	</form>
+	<br>
+	<button class="btn btn-primary" ng-click="partRoom()">Leave room</button>
 </div>
 <div>
 </div>
@@ -31,9 +33,9 @@
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="sendPrivatMessage()"> Send private message</a>
 					</li>
-					<li role="presentation">
+					<!--<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="partRoom()"> Leave room</a>
-					</li>
+					</li>-->
 				</ul>
 		</div>
 	</div>

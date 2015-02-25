@@ -2,7 +2,7 @@
 	list-style-type: none;
 }
 
-.chat{
+#chat{
 	padding-top: 2px;
 	list-style-type: none;
 	background-color: rgb(235,235,235);
@@ -11,7 +11,8 @@
 	line-height: 0.6;
 	height: 300px;
 	margin-bottom: 10px;
-	overflow-y: auto;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 #sendMsg{
