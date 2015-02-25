@@ -2,7 +2,7 @@
 	list-style-type: none;
 }
 
-.chat{
+#chat{
 	padding-top: 2px;
 	list-style-type: none;
 	background-color: rgb(235,235,235);
@@ -16,4 +16,16 @@
 
 #sendMsg{
 	width: 701px;
+}
+
+#lobby {
+	width: 30%;
+	list-style-type:none;
+
+}
+#roomList {
+	list-style-type:none; 
+}
+#userCount {
+	font-weight: bold;
 }

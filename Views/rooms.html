@@ -1,19 +1,20 @@
-<h3>Hi {{currentUser}} - Active chat rooms</h3>
+<h3>Hi {{currentUser}}!</h3>
 
 <div class="alert alert-danger" ng-cloak ng-show="errorMessage != ''">
 	{{errorMessage}}
 </div>
-
-<form ng-submit="addRoom()">
-Create new room:<input type="text" ng-model="newRoom"/>
-<button class="btn btn-primary" ng-click="addRoom()">Create</button>
-</form>
-
-<div class="well">
-	<ul ng-repeat="currRoom in rooms">
+<div class="well" id="lobby">
+	<h4>Active chat rooms</h4>
+	<ul ng-repeat="currRoom in rooms" id="roomList">
 		<!--<li><a href="#/room/{{currentUser}}/{{room}}">{{room}}</a></li>-->
 		<li>
 			<a ng-click="joinRoom(currRoom)">{{currRoom}}</a>
 		</li>
 	</ul>
+
+	<form ng-submit="addRoom()" id="addRoomForm">
+		<input type="text" ng-model="newRoom"/>
+		<button class="btn btn-primary" ng-click="addRoom()">Create room</button>
+	</form>
 </div>
+<p id="userCount"> There are {{userCount}} users online!</p>

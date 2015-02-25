@@ -6,12 +6,19 @@ ChatClient.config(
 			.when('/login', { templateUrl: 'Views/login.html', controller: 'LoginController' })
 			.when('/rooms/:user/', { templateUrl: 'Views/rooms.html', controller: 'RoomsController' })
 			.when('/room/:user/:room/', { templateUrl: 'Views/room.html', controller: 'RoomController' })
-			.when('/room/:user/:room/:privateUser', { templateUrl: 'Views/room.html', controller: 'PrivateRoomController' })
+			.when('/logoff', { controller: 'LogoffController' })
 			.otherwise({
 	  			redirectTo: '/login'
 			});
 	}
 );
+
+ChatClient.controller('LogoffController', function ($scope, socket, $location) {
+	$scope.logoff = function () {
+		socket.emit('logoff');
+		$location.path('/login');
+	}
+});
 
 ChatClient.controller('LoginController', function ($scope, $location, $rootScope, $routeParams, socket) {
 	
@@ -38,13 +45,14 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 	$scope.currentUser = $routeParams.user;
 	$scope.currentRoom = $routeParams.room;
 	$scope.errorMessage = '';
+	$scope.userCount = [];
+
 	$scope.addRoom = function(){
 		socket.emit('joinroom', {room: $scope.newRoom}, function (success, reason) {
 			if (!success){
 				$scope.errorMessage = reason;
 			}
 			else{
-				console.log($scope.newRoom);
 				$location.path('/room/' + $scope.currentUser  + '/' +  $scope.newRoom );
 			}
 		});
@@ -60,13 +68,16 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 			}
 		});
 	}
-
-	$scope.newRoom = "";
 	socket.on('roomlist', function(activeRooms){
 		if(activeRooms !== null){
 			$scope.rooms = Object.keys(activeRooms);
 		}
 	});
+
+	socket.on('userlist', function (userlist) {
+		$scope.userCount = userlist.length;
+	});
+	socket.emit('users');
 
 	socket.emit('rooms');
 });
@@ -81,6 +92,12 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	$scope.sendPrivateMsg = false;
 	$scope.privateUser = ''
 
+	$scope.partRoom = function () {
+		console.log("yo mamma");
+		socket.emit('partroom', $scope.currentRoom);
+		$location.path('/rooms/' + $scope.currentUser);
+	};
+
 	$scope.addMessage = function(){
 		if($scope.newMessage !== ""){
 			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
@@ -92,17 +109,22 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			});	
 		}
 	};
-
-	socket.on('userlist', function(currentUsers){
-		console.log(currentUsers);
-	});
 	
 	socket.emit('users');
+
 	socket.on('updateusers', function (roomName, users, ops) {
 		if(roomName === $routeParams.room){
 			$scope.currentUsers = users;
 		}
 	});	
+
+	socket.on('updatechat', function (roomName, history){
+		if(roomName === $routeParams.room){
+			$scope.messages = history;
+		}
+		$('#chat').animate(
+			{scrollTop: $(document).height() + 5000}, "fast");
+	});
 
 	socket.emit('joinroom', {room: $scope.currentRoom}, function (success, reason) {
 		if (!success){
@@ -120,8 +142,6 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 	};
 
 	socket.on('kicked', function (roomName, kickedUser, user) {
-		console.log(kickedUser);
-		console.log('trololo');
 		if($scope.currentUser === kickedUser){
 			$location.path('/rooms/' + $scope.currentUser)
 		}
@@ -133,11 +153,6 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 				$scope.errorMessage = "You must be the creator of this group to ban users";
 			}
 		});
-	};
-
-	$scope.partRoom = function (user) {
-		$scope.currentUser = user;
-		socket.emit('partroom', {room: $scope.currentRoom});
 	};
 	$scope.sendPrivateMessage = function (user) {
 		$scope.sendPrivateMsg = true;
@@ -164,64 +179,4 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 		};
 		$scope.privateMessages.push(messageObj);
 	});
-	/*$scope.sendPrivateMessage = function (user) {
-		console.log('/room/' + $scope.currentUser + '/' + $scope.currentRoom + '/' + user);
-		$location.path('/room/' + $scope.currentUser + '/' + $scope.currentRoom + '/' + user);
-	}
-	socket.on('recv_privatemsg', function (nick, message){
-		$location.path('/room/' + $scope.currentUser + '/' + $scope.currentRoom + '/' + nick);
-	});*/
 });
-
-/*ChatClient.controller('PrivateRoomController', function ($scope, $location, $rootScope, $routeParams, socket) {
-	$scope.currentRoom = $routeParams.room;
-	$scope.currentUser = $routeParams.user;
-	$scope.privateUser = $routeParams.privateUser;
-	$scope.currentUsers = [];
-	$scope.privateRooms = [];
-	$scope.errorMessage = '';
-	$scope.messages = [];
-	$scope.privateRooms.push($scope.privateUser);
-	$scope.currentUsers.push($scope.currentUser);
-	$scope.currentUsers.push($scope.privateUser);
-
-	//socket.emit('joinroom', {room: $scope.privateUser}, function (success, reason) {
-	//	if (!success){
-	//		$scope.errorMessage = reason;
-	//	}
-	//	else{
-	//		$scope.currentUser.push(user);
-	//	}
-	//});
-	$scope.addMessage = function(){
-		console.log($scope.newMessage);
-		if($scope.newMessage !== "" ){
-			socket.emit('privatemsg', {nick: $scope.privateUser, message: $scope.newMessage}, function (success) {
-			if(!success){
-				$scope.errorMessage = "Error";
-			}
-		});
-		$scope.newMessage = "";
-		}
-		socket.on('recv_privatemsg', function (nick, message){
-			console.log(message);
-			$scope.messages.push(message);
-			$scope.currentUsers.push(nick);
-		});
-	}
-});*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
