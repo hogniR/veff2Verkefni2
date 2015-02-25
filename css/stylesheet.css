@@ -11,10 +11,21 @@
 	line-height: 0.6;
 	height: 300px;
 	margin-bottom: 10px;
-	overflow-y: scroll;
-	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 #sendMsg{
 	width: 701px;
+}
+
+#lobby {
+	width: 30%;
+	list-style-type:none;
+
+}
+#roomList {
+	list-style-type:none; 
+}
+#userCount {
+	font-weight: bold;
 }

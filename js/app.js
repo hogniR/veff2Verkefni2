@@ -6,11 +6,19 @@ ChatClient.config(
 			.when('/login', { templateUrl: 'Views/login.html', controller: 'LoginController' })
 			.when('/rooms/:user/', { templateUrl: 'Views/rooms.html', controller: 'RoomsController' })
 			.when('/room/:user/:room/', { templateUrl: 'Views/room.html', controller: 'RoomController' })
+			.when('/logoff', { controller: 'LogoffController' })
 			.otherwise({
 	  			redirectTo: '/login'
 			});
 	}
 );
+
+ChatClient.controller('LogoffController', function ($scope, socket, $location) {
+	$scope.logoff = function () {
+		socket.emit('logoff');
+		$location.path('/login');
+	}
+});
 
 ChatClient.controller('LoginController', function ($scope, $location, $rootScope, $routeParams, socket) {
 	
@@ -37,6 +45,8 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 	$scope.currentUser = $routeParams.user;
 	$scope.currentRoom = $routeParams.room;
 	$scope.errorMessage = '';
+	$scope.userCount = [];
+
 	$scope.addRoom = function(){
 		socket.emit('joinroom', {room: $scope.newRoom}, function (success, reason) {
 			if (!success){
@@ -66,6 +76,11 @@ ChatClient.controller('RoomsController', function ($scope, $location, $rootScope
 		}
 	})
 
+	socket.on('userlist', function (userlist) {
+		$scope.userCount = userlist.length;
+	});
+	socket.emit('users');
+
 	socket.emit('rooms');
 });
 
@@ -87,7 +102,7 @@ ChatClient.controller('RoomController', function ($scope, $location, $rootScope,
 			socket.emit('sendmsg', {roomName: $scope.currentRoom, msg: $scope.newMessage});
 			$scope.newMessage = "";	
 		}
-	}
+	};
 	
 	socket.emit('users');
 
